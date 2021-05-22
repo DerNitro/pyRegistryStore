@@ -11,7 +11,7 @@ import inspect
 from objects import set, get, last, help as o_help
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'
@@ -49,10 +49,16 @@ for module in _modules:
 
 HELP = """Help: - {file}:{version}
 Usage:
-  1. Получить список модулей
+  1. get modules list
     {file} ls
-  2. Получить информацию по модулю
+  2. get information of module
     {file} <module> help
+  3. write record to registry
+    {file} <module> set [key=value]...
+  4. get records from registry, key=value as filter, return json list of object
+    {file} <module> get [key=value]...
+  5. last record from registry, key=value as filter, return json object
+    {file} <module> last [key=value]...
 
 {author}, mailto:{email}, 2021""".format(
     file=__file__,
@@ -65,12 +71,11 @@ if not os.path.isdir(REGISTRY_FOLDER):
     os.makedirs(REGISTRY_FOLDER)
 
 args = sys.argv[1:]
-# print(args)
 
 if len(args) == 0:
     print(HELP)
 elif len(args) == 1 and args[0] == 'ls':
-    print('Список модулей:')
+    print('List of modules:')
     for k, v in _plugins.items():
         print("  {name:20}{describe}".format(name=k, describe=v().describe()))
 elif args[0] in [i for i in _plugins]:
@@ -87,7 +92,7 @@ elif args[0] in [i for i in _plugins]:
 elif len(args) == 1 and (args[0] == '-h' or args[0] == '--help'):
     print(HELP)
 else:
-    print('Не корректный ввод параметров!!!\n')
+    print('Incorrect input of parameters !!!\n')
     print(HELP)
 
 sys.exit(0)

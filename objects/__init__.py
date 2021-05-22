@@ -50,7 +50,7 @@ class RegistryStore(yaml.YAMLObject):
 
     def describe(self) -> str:
         """
-        Краткое описание модуля, используется в LS
+        Brief description of the module, used in LS
         """
         pass
 
