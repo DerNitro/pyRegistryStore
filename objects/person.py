@@ -16,6 +16,7 @@ class Person(objects.RegistryStore):
         Last Name
     """
     uniq_key = ['first_name', 'last_name']
+    desc = 'Module Person'
 
     first_name = None
     last_name = None
@@ -24,6 +25,3 @@ class Person(objects.RegistryStore):
         super().__init__()
         self.first_name = 'Foo'
         self.last_name = 'Bar'
-
-    def describe(self):
-        return str('Module Person')
