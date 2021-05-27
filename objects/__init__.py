@@ -126,7 +126,7 @@ def auto_type(value):
 def equal_object(obj: RegistryStore, args: list):
     for arg in args:
         key, value = str(arg).split('=')
-        if getattr(obj, key, None) != value:
+        if getattr(obj, key, None) != auto_type(value):
             return False
     return True
 

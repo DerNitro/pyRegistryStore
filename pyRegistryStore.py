@@ -25,7 +25,7 @@ import inspect
 from objects import set, get, last, help as o_help
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'
