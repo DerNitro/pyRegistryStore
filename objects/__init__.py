@@ -14,14 +14,18 @@
    limitations under the License.
 """
 
-import yaml
 import os
 from datetime import datetime
 import uuid
 import json
+from typing import Union
+import yaml
 
 
 class Meta(yaml.YAMLObject):
+    """
+    Объект хранения meta информации
+    """
     def __init__(self):
         self.create_time = datetime.now()
         self.update_time = datetime.now()
@@ -42,10 +46,19 @@ class Meta(yaml.YAMLObject):
         return str(self.__dict__)
 
     def increment(self):
+        """
+        Инкрементное обновление версии
+        """
         self.version += 1
         self.update_time = datetime.now()
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
+        """
+        Формирование справочника объекта, для представления в формате JSON
+
+        Returns:
+            dict: Справочник
+        """
         return dict(
             {
                 "create_time": str(self.create_time),
@@ -57,36 +70,69 @@ class Meta(yaml.YAMLObject):
 
 
 class RegistryStore(yaml.YAMLObject):
+    """
+    Объект RegistryStore.
+    """
     _meta = None
     file_name = None
-    uniq_key = None
+    uniq_key = []
+    desc = None
 
-    def __init__(self) -> None:
-        self._meta = Meta()
+    def __init__(self):
+        self.meta = Meta()
 
-    def describe(self):
+    def describe(self) -> str:
+        """
+        Возвращает значение desc объекта RegistryStore
+
+        Returns:
+            str: Значение RegistryStore.desc
+        """
         return self.desc
 
     def help(self) -> str:
+        """
+        Возвращает описание объекта docstring
+
+        Returns:
+            str: Описание объекта
+        """
         return str(self.__class__.__doc__)
 
-    def add_attr(self, key, value):
+    def add_attr(self, key: str, value: str):
+        """
+        Создает произвольный атрибут объекта RegistryStore
+
+        Args:
+            key (str): Название атрибута
+            value (str): Значение атрибута
+        """
         setattr(self, key, value)
 
-    def get_filename(self):
+    def get_filename(self) -> str:
+        """
+        Возвращает имя файла для хранения объектов
+
+        Returns:
+            str: Имя файла
+        """
         if self.file_name:
             return self.file_name
-        else:
-            return str(self.__class__.__name__).lower() + '.yml'
+        return str(self.__class__.__name__).lower() + '.yml'
 
     def to_dict(self):
+        """
+        Формирование справочника атрибутов объекта
+
+        Returns:
+            dict: Справочник объекта
+        """
         result = {}
-        for k, v in self.__dict__.items():
-            if isinstance(v, Meta):
-                result[k] = v.to_dict()
-                pass
+        for key, value in self.__dict__.items():
+            if isinstance(value, Meta):
+                result[key] = value.to_dict()
             else:
-                result[k] = v
+                result[key] = value
         return result
 
     def __repr__(self):
@@ -95,7 +141,7 @@ class RegistryStore(yaml.YAMLObject):
     def __str__(self) -> str:
         return str(self.__dict__)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if isinstance(other, self.__class__):
             for uniq_key in self.uniq_key:
                 if getattr(self, uniq_key) != getattr(other, uniq_key):
@@ -108,11 +154,18 @@ class RegistryStore(yaml.YAMLObject):
         return self._meta.update_time < other._meta.update_time
 
 
-def auto_type(value):
-    try:
-        return(int(value))
-    except ValueError:
-        pass
+def auto_type(value: str) -> Union[int, str, bool]:
+    """
+    Преобразование строки в INT или BOOL
+
+    Args:
+        value (str): Значение
+
+    Returns:
+        Преобразованое значение
+    """
+    if str(value).isdigit():
+        return int(value)
 
     if str(value).lower() in ['true', 'y', 'yes']:
         return True
@@ -123,7 +176,17 @@ def auto_type(value):
     return value
 
 
-def equal_object(obj: RegistryStore, args: list):
+def equal_object(obj: RegistryStore, args: list) -> bool:
+    """
+    Проверка наличия атрибутов объекта
+
+    Args:
+        obj (RegistryStore): Объект
+        args (list): список атрибутов
+
+    Returns:
+        bool: Истина если все атрибуты присутствуют у объекта
+    """
     for arg in args:
         key, value = str(arg).split('=')
         if getattr(obj, key, None) != auto_type(value):
@@ -132,6 +195,12 @@ def equal_object(obj: RegistryStore, args: list):
 
 
 def print_json(data):
+    """
+    Печать информации об объектах в формате JSON
+
+    Args:
+        data (list or RegistryStore): Объект или список объектов
+    """
     if isinstance(data, list):
         results = []
         for obj in data:
@@ -141,38 +210,54 @@ def print_json(data):
         print(json.dumps(data.to_dict()))
 
 
-def set(object: RegistryStore, folder, args):
+def set_object(data: RegistryStore, folder: str, args: list):
+    """
+    Запись объекта в реестр, если объект существует, то обновляется его информация
+
+    Args:
+        data (RegistryStore): Класс объекта
+        folder (str): Директория хранения реестра
+        args (list): Список аргументов
+    """
     obj_list = []
-    o = object()
+    rs_object = data()
     for arg in args:
         key, value = str(arg).split('=')
-        o.add_attr(key, auto_type(value))
+        rs_object.add_attr(key, auto_type(value))
 
-    file_name = os.path.join(folder, o.get_filename())
+    file_name = os.path.join(folder, rs_object.get_filename())
     if os.path.isfile(file_name):
         with open(file_name, 'r') as stream:
             obj_list = yaml.load(stream, Loader=yaml.CLoader)
-        if o in obj_list:
-            indx = obj_list.index(o)
-            o = obj_list.pop(indx)
-            o._meta.increment()
+        if rs_object in obj_list:
+            indx = obj_list.index(rs_object)
+            rs_object = obj_list.pop(indx)
+            rs_object.meta.increment()
             for arg in args:
                 key, value = str(arg).split('=')
-                o.add_attr(key, auto_type(value))
-            obj_list.append(o)
+                rs_object.add_attr(key, auto_type(value))
+            obj_list.append(rs_object)
         else:
-            obj_list.append(o)
+            obj_list.append(rs_object)
     else:
-        obj_list.append(o)
+        obj_list.append(rs_object)
 
     with open(file_name, 'w') as stream:
         stream.write(yaml.dump(obj_list, Dumper=yaml.CDumper))
 
 
-def get(object, folder, args):
-    o = object()
+def get_object(data: RegistryStore, folder: str, args: list):
+    """
+    Получение объектов из реестра
+
+    Args:
+        data (RegistryStore): Класс объекта
+        folder (str): Директория расположения реестра
+        args (list): Список аргументов
+    """
+    rs_object = data()
     result = []
-    file_name = os.path.join(folder, o.get_filename())
+    file_name = os.path.join(folder, rs_object.get_filename())
     if os.path.isfile(file_name):
         with open(file_name, 'r') as stream:
             obj_list = yaml.load(stream, Loader=yaml.CLoader)
@@ -184,10 +269,18 @@ def get(object, folder, args):
         pass
 
 
-def last(object, folder, args):
-    o = object()
+def last_object(data: RegistryStore, folder: str, args: list):
+    """
+    Получение последнего объекта по дате обновления элемента
+
+    Args:
+        data (RegistryStore): Класс объекта
+        folder (str): Директория расположения реестра
+        args (list): Список аргументов
+    """
+    rs_object = data()
     result = []
-    file_name = os.path.join(folder, o.get_filename())
+    file_name = os.path.join(folder, rs_object.get_filename())
     if os.path.isfile(file_name):
         with open(file_name, 'r') as stream:
             obj_list = yaml.load(stream, Loader=yaml.CLoader)
@@ -199,6 +292,12 @@ def last(object, folder, args):
         pass
 
 
-def help(object):
-    o = object()
-    print(o.help())
+def help_object(data: RegistryStore):
+    """
+    Вывод справочной информации
+
+    Args:
+        data (RegistryStore): Класс объекта
+    """
+    rs_object = data()
+    print(rs_object.help())
