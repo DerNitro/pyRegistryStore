@@ -22,27 +22,42 @@ import sys
 import importlib
 import os
 import inspect
-from objects import set, get, last, help as o_help
+from objects import set_object, get_object, last_object, help_object
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'
 REGISTRY_FOLDER = 'registry'
 
 
-def form_module(fp):
-    return '.' + os.path.splitext(fp)[0]
+def form_module(file_path: str) -> str:
+    """
+    Формирует путь до плагина
+
+    Args:
+        file_path (str): Путь до файла
+
+    Returns:
+        str: Путь до плагина
+    """
+    return '.' + os.path.splitext(file_path)[0]
 
 
 # copy-past from https://copyninja.info/blog/dynamic-module-loading.html
-def load_plugins():
+def load_plugins() -> list:
+    """
+    Поиск и загрузка модулей из директории OBJECT_FOLDER
+
+    Returns:
+        list: список модулей
+    """
     files = os.listdir(os.path.join(os.path.dirname(__file__), OBJECT_FOLDER))
     pluginfiles = []
-    for f in files:
-        if f.endswith('.py') and not f.startswith('__'):
-            pluginfiles.append(f)
+    for file in files:
+        if file.endswith('.py') and not file.startswith('__'):
+            pluginfiles.append(file)
     plugins = map(form_module, pluginfiles)
     importlib.import_module('objects')
     modules = []
@@ -94,13 +109,13 @@ elif len(args) == 1 and args[0] == 'ls':
         print("  {name:20}{describe}".format(name=k, describe=v().describe()))
 elif args[0] in [i for i in _plugins]:
     if args[1] == 'set':
-        set(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
+        set_object(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     elif args[1] == 'get':
-        get(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
+        get_object(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     elif args[1] == 'last':
-        last(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
+        last_object(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     elif args[1] == 'help':
-        o_help(_plugins[args[0]])
+        help_object(_plugins[args[0]])
     else:
         print(HELP)
 elif len(args) == 1 and (args[0] == '-h' or args[0] == '--help'):
