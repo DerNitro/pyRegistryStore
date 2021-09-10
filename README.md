@@ -1,10 +1,12 @@
 # pyRegistryStore
 
+[![CircleCI](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/main.svg?style=shield)](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/main)
+
 Скрипт по созданию и работе с реестром объектов.
 
 ## Создание объекта реестра
 
-Объект описывается в произвольном файле с расширением **.py** директории **objects**, и представляет собой **python class**. 
+Объект описывается в произвольном файле с расширением **.py** директории **objects**, и представляет собой **python class**.
 
 Название модуля будет соответствовать имени класса в нижнем регистре.
 
@@ -30,7 +32,6 @@
         self.first_name = 'Foo'
         self.last_name = 'Bar'
 
-
 ### Атрибуты класса
 
 * `desc` - Краткое описание модуля, применяется при выводе списка модулей через параметр ls
@@ -40,6 +41,7 @@
 ## Использование
 
 ### Получение справки
+
 Используется ключ **--help**
 
     ./pyRegistryStore.py --help
@@ -56,7 +58,7 @@
     5. last record from registry, key=value as filter, return json object
         ./pyRegistryStore.py <module> last [key=value]...
 
-    Sergey V. Utkin, mailto:utkins01@gmail.com, 2021
+    Sergei V. Utkin, mailto:utkins01@gmail.com, 2021
 
 ### Получить список объектов
 

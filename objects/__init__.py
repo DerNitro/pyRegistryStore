@@ -73,7 +73,7 @@ class RegistryStore(yaml.YAMLObject):
     """
     Объект RegistryStore.
     """
-    _meta = None
+    meta = None
     file_name = None
     uniq_key = []
     desc = None
@@ -151,7 +151,7 @@ class RegistryStore(yaml.YAMLObject):
         return False
 
     def __lt__(self, other):
-        return self._meta.update_time < other._meta.update_time
+        return self.meta.update_time < other.meta.update_time
 
 
 def auto_type(value: str) -> Union[int, str, bool]:
