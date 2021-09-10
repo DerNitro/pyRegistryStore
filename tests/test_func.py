@@ -13,9 +13,9 @@ def test_auto_type():
     assert auto_type('test') == str('test')
     assert auto_type('5') == 5
     for i in ['true', 'y', 'yes']:
-        assert auto_type(i) == True
+        assert auto_type(i)
     for i in ['false', 'f', 'no']:
-        assert auto_type(i) == False
+        assert not auto_type(i)
 
 def test_equal_object():
     """

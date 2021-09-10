@@ -1,5 +1,7 @@
 # pyRegistryStore
 
+[![CircleCI](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/main.svg?style=svg)](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/main)
+
 Скрипт по созданию и работе с реестром объектов.
 
 ## Создание объекта реестра
