@@ -6,6 +6,7 @@ import sys
 sys.path.append('.')
 from objects import auto_type, equal_object, RegistryStore
 
+
 def test_auto_type():
     """
         Проверка преобразования значений
