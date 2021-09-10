@@ -2,6 +2,7 @@
     Тестирование объекта Person
 """
 
+import time
 import importlib
 import inspect
 import os
@@ -55,9 +56,16 @@ for module in _modules:
 def test_person():
     """
         Тестирование объекта Person
+          * Проверка заполнения полей по умолчанию
+          * Сравнение по уникальным полям
+          * Сравнение по времени создания
     """
-    test_obj = _plugins['person']()
+    test_obj1 = _plugins['person']()
+    time.sleep(0.1)
+    test_obj2 = _plugins['person']()
 
-    assert test_obj.desc == 'Module Person'
-    assert test_obj.first_name == 'Foo'
-    assert test_obj.last_name == 'Bar'
+    assert test_obj1.desc == test_obj2.desc == 'Module Person'
+    assert test_obj1.first_name == test_obj2.first_name == 'Foo'
+    assert test_obj1.last_name == test_obj2.last_name == 'Bar'
+    assert test_obj1 == test_obj2
+    assert test_obj2 > test_obj1
