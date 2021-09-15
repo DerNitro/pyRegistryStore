@@ -305,7 +305,6 @@ def get_object(data: RegistryStore, folder: str, args: list):
     print_json(get_list_objects(data, folder, args))
 
 
-
 def last_object(data: RegistryStore, folder: str, args: list):
     """
     Получение последнего объекта по дате обновления элемента
