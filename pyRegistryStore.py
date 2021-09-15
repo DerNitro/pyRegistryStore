@@ -22,10 +22,10 @@ import sys
 import importlib
 import os
 import inspect
-from objects import set_object, get_object, last_object, help_object
+from objects import set_object, get_object, last_object, help_object, markdown
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'
@@ -88,6 +88,8 @@ Usage:
     {file} <module> get [key=value]...
   5. last record from registry, key=value as filter, return json object
     {file} <module> last [key=value]...
+  6. get markdown table
+    {file} <module> markdown
 
 {author}, mailto:{email}, 2021""".format(
     file=__file__,
@@ -116,6 +118,8 @@ elif args[0] in [i for i in _plugins]:
         last_object(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     elif args[1] == 'help':
         help_object(_plugins[args[0]])
+    elif args[1] == 'markdown':
+        markdown(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     else:
         print(HELP)
 elif len(args) == 1 and (args[0] == '-h' or args[0] == '--help'):

@@ -20,6 +20,7 @@ import uuid
 import json
 from typing import Union
 import yaml
+from mdutils.tools.Table import Table as md_table
 
 
 class Meta(yaml.YAMLObject):
@@ -194,7 +195,31 @@ def equal_object(obj: RegistryStore, args: list) -> bool:
     return True
 
 
-def print_json(data):
+def get_list_objects(data: RegistryStore, folder: str, args: list) -> list:
+    """
+    Загрузка списка объектов по модулю
+
+    Args:
+        data (RegistryStore): Класс объекта
+        folder (str): Директория хранения данных
+        args (list): Список аргументов
+
+    Returns:
+        list: Список объектов
+    """
+    rs_object = data()
+    result = []
+    file_name = os.path.join(folder, rs_object.get_filename())
+    if os.path.isfile(file_name):
+        with open(file_name, 'r') as stream:
+            obj_list = yaml.load(stream, Loader=yaml.CLoader)
+        for obj in obj_list:
+            if equal_object(obj, args):
+                result.append(obj)
+    return result
+
+
+def print_json(data: Union[list, RegistryStore]):
     """
     Печать информации об объектах в формате JSON
 
@@ -208,6 +233,28 @@ def print_json(data):
         print(json.dumps(results))
     if isinstance(data, RegistryStore):
         print(json.dumps(data.to_dict()))
+
+
+def print_markdown(data: list):
+    header = set()
+    body = []
+    for obj in data:
+        header |= set([*obj.__dict__]).difference(set(obj.uniq_key))
+    header = list(header.difference(set(['meta'])))
+    header.insert(0, 'name')
+    for obj in data:
+        for h in header:
+            if h == 'name':
+                name = []
+                for uk in obj.uniq_key:
+                    name.append(getattr(obj, uk))
+                body.append(' '.join(name))
+            else:
+                body.append(getattr(obj, h, ""))
+    result = header + body
+    table = md_table().create_table(columns=len(header), rows=len(data) + 1, text=result)
+
+    print(table)
 
 
 def set_object(data: RegistryStore, folder: str, args: list):
@@ -255,18 +302,8 @@ def get_object(data: RegistryStore, folder: str, args: list):
         folder (str): Директория расположения реестра
         args (list): Список аргументов
     """
-    rs_object = data()
-    result = []
-    file_name = os.path.join(folder, rs_object.get_filename())
-    if os.path.isfile(file_name):
-        with open(file_name, 'r') as stream:
-            obj_list = yaml.load(stream, Loader=yaml.CLoader)
-        for obj in obj_list:
-            if equal_object(obj, args):
-                result.append(obj)
-        print_json(result)
-    else:
-        pass
+    print_json(get_list_objects(data, folder, args))
+
 
 
 def last_object(data: RegistryStore, folder: str, args: list):
@@ -278,18 +315,7 @@ def last_object(data: RegistryStore, folder: str, args: list):
         folder (str): Директория расположения реестра
         args (list): Список аргументов
     """
-    rs_object = data()
-    result = []
-    file_name = os.path.join(folder, rs_object.get_filename())
-    if os.path.isfile(file_name):
-        with open(file_name, 'r') as stream:
-            obj_list = yaml.load(stream, Loader=yaml.CLoader)
-        for obj in obj_list:
-            if equal_object(obj, args):
-                result.append(obj)
-        print_json(sorted(result, reverse=True)[0])
-    else:
-        pass
+    print_json(sorted(get_list_objects(data, folder, args), reverse=True)[0])
 
 
 def help_object(data: RegistryStore):
@@ -301,3 +327,13 @@ def help_object(data: RegistryStore):
     """
     rs_object = data()
     print(rs_object.help())
+
+
+def markdown(data: RegistryStore, folder: str, args: list):
+    """
+    Формирование таблицы объекта в формите Markdown
+
+    Args:
+        data (RegistryStore): Класс объекта
+    """
+    print_markdown(get_list_objects(data, folder, args))
