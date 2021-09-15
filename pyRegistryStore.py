@@ -89,7 +89,7 @@ Usage:
   5. last record from registry, key=value as filter, return json object
     {file} <module> last [key=value]...
   6. get markdown table
-    {file} <module> markdown
+    {file} <module> markdown [key=value]...
 
 {author}, mailto:{email}, 2021""".format(
     file=__file__,

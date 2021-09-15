@@ -57,6 +57,8 @@
         ./pyRegistryStore.py <module> get [key=value]...
     5. last record from registry, key=value as filter, return json object
         ./pyRegistryStore.py <module> last [key=value]...
+    6. get markdown table
+        ./pyRegistryStore.py <module> markdown [key=value]...
 
     Sergei V. Utkin, mailto:utkins01@gmail.com, 2021
 
@@ -108,3 +110,9 @@
 Последующие аргументы будут считаться фильтром через **"И"**. В качестве результата будет передан последний **объект в JSON**
 
     ./pyRegistryStore.py person last last_name=Bar
+
+### Формирование таблицы в формате Markdown
+
+Объекты можно вывести в формате **Markdown**, представлены будут в виде таблицы
+
+    ./pyRegistryStore.py person markdown
