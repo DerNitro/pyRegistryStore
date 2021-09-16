@@ -11,32 +11,31 @@
 Название модуля будет соответствовать имени класса в нижнем регистре.
 
     class Person(objects.RegistryStore):
-    """
-    Person Object
+        """
+            Person Object
 
-    Parameters
-    ----------
-    first_name: str
-        First Name
-    last_name: str
-        Last Name
-    """
-    uniq_key = ['first_name', 'last_name']
-    desc = 'Module Person'
+            Parameters
+            ----------
+            first_name: str
+                First Name
+            last_name: str
+                Last Name
+        """
+        _protection = False
+        
+        uniq_key = ['first_name', 'last_name']
+        desc = 'Module Person'
 
-    first_name = None
-    last_name = None
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.first_name = 'Foo'
-        self.last_name = 'Bar'
+        first_name: str = 'Foo'
+        last_name:  str = 'Bar'
+        sex:        str = ''
 
 ### Атрибуты класса
 
 * `desc` - Краткое описание модуля, применяется при выводе списка модулей через параметр ls
 * `uniq_key` - список атрибутов класса, которые считают уникальными для объектов в реестре
 * [`__doc__`](https://www.python.org/dev/peps/pep-0257/) - описание объекта, используется для получения справки по объекту.
+* `_protection` - Установка защиты на класс, если значение True, то добавление новых атрибутов объекта будет запрещено, по умолчанию защита установлена
 
 ## Использование
 

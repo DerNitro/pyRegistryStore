@@ -69,3 +69,26 @@ def test_person():
     assert test_obj1.last_name == test_obj2.last_name == 'Bar'
     assert test_obj1 == test_obj2
     assert test_obj2 > test_obj1
+
+def test_protection():
+    """
+        Проверка установки защиты на объект
+    """
+    test_obj1 = _plugins['person']()
+    test_obj2 = _plugins['person']()
+
+    test_obj1.protection(False)
+    test_obj1.add_attr('first_name', 'Bar')
+    test_obj1.add_attr('last_name', 'Foo')
+    test_obj1.add_attr('test', 'test')
+    assert test_obj1.first_name == 'Bar'
+    assert test_obj1.last_name == 'Foo'
+    assert test_obj1.test == 'test'
+
+    test_obj2.protection(True)
+    test_obj2.add_attr('first_name', 'Bar')
+    test_obj2.add_attr('last_name', 'Foo')
+    test_obj2.add_attr('test', 'test')
+    assert test_obj2.first_name == 'Bar'
+    assert test_obj2.last_name == 'Foo'
+    assert not hasattr(test_obj2, 'test')
