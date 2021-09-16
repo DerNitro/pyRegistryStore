@@ -27,6 +27,7 @@ class Meta(yaml.YAMLObject):
     """
     Объект хранения meta информации
     """
+
     def __init__(self):
         self.create_time = datetime.now()
         self.update_time = datetime.now()
@@ -74,13 +75,30 @@ class RegistryStore(yaml.YAMLObject):
     """
     Объект RegistryStore.
     """
-    meta = None
+    _meta = None
+    _protection = True
+
     file_name = None
     uniq_key = []
     desc = None
 
     def __init__(self):
-        self.meta = Meta()
+        self._meta = Meta()
+
+    def meta_increment(self):
+        """
+            Вызов метода increment объекта Meta
+        """
+        self._meta.increment()
+
+    def protection(self, state: bool):
+        """
+        Устанавливает защиту на добавление атрибутов объекту
+
+        Args:
+            state (bool): Статус True - Включить.
+        """
+        self._protection = state
 
     def describe(self) -> str:
         """
@@ -108,7 +126,8 @@ class RegistryStore(yaml.YAMLObject):
             key (str): Название атрибута
             value (str): Значение атрибута
         """
-        setattr(self, key, value)
+        if not self._protection or hasattr(self, key):
+            setattr(self, key, value)
 
     def get_filename(self) -> str:
         """
@@ -152,7 +171,7 @@ class RegistryStore(yaml.YAMLObject):
         return False
 
     def __lt__(self, other):
-        return self.meta.update_time < other.meta.update_time
+        return self._meta.update_time < other._meta.update_time
 
 
 def auto_type(value: str) -> Union[int, str, bool]:
@@ -211,7 +230,7 @@ def get_list_objects(data: RegistryStore, folder: str, args: list) -> list:
     result = []
     file_name = os.path.join(folder, rs_object.get_filename())
     if os.path.isfile(file_name):
-        with open(file_name, 'r') as stream:
+        with open(file_name, 'r', encoding='UTF-8') as stream:
             obj_list = yaml.load(stream, Loader=yaml.CLoader)
         for obj in obj_list:
             if equal_object(obj, args):
@@ -236,11 +255,17 @@ def print_json(data: Union[list, RegistryStore]):
 
 
 def print_markdown(data: list):
+    """
+    Вывод списка объектов в виде таблицы в формате MArkdown
+
+    Args:
+        data (list): Список объектов
+    """
     header = set()
     body = []
     for obj in data:
         header |= set([*obj.__dict__]).difference(set(obj.uniq_key))
-    header = list(header.difference(set(['meta'])))
+    header = list(header.difference(set(['_meta'])))
     header.insert(0, 'name')
     for obj in data:
         for h in header:
@@ -274,12 +299,12 @@ def set_object(data: RegistryStore, folder: str, args: list):
 
     file_name = os.path.join(folder, rs_object.get_filename())
     if os.path.isfile(file_name):
-        with open(file_name, 'r') as stream:
+        with open(file_name, 'r', encoding='UTF-8') as stream:
             obj_list = yaml.load(stream, Loader=yaml.CLoader)
         if rs_object in obj_list:
             indx = obj_list.index(rs_object)
             rs_object = obj_list.pop(indx)
-            rs_object.meta.increment()
+            rs_object.meta_increment()
             for arg in args:
                 key, value = str(arg).split('=')
                 rs_object.add_attr(key, auto_type(value))
@@ -289,7 +314,7 @@ def set_object(data: RegistryStore, folder: str, args: list):
     else:
         obj_list.append(rs_object)
 
-    with open(file_name, 'w') as stream:
+    with open(file_name, 'w', encoding='UTF-8') as stream:
         stream.write(yaml.dump(obj_list, Dumper=yaml.CDumper))
 
 
