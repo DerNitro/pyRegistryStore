@@ -4,6 +4,7 @@
 from datetime import datetime
 from objects import RegistryStore, now
 
+
 class Person(RegistryStore):
     """
     Person Object

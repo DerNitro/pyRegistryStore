@@ -26,9 +26,10 @@
         _uniq_key = ['first_name', 'last_name']
         _desc = 'Module Person'
 
-        first_name: str = 'Foo'
-        last_name:  str = 'Bar'
-        sex:        str = ''
+        first_name:     str = 'Foo'
+        last_name:      str = 'Bar'
+        sex:            str = ''
+        create_date:    datetime = now()
 
 ### Атрибуты класса
 
@@ -36,6 +37,10 @@
 * `_uniq_key` - список атрибутов класса, которые считают уникальными для объектов в реестре
 * [`__doc__`](https://www.python.org/dev/peps/pep-0257/) - описание объекта, используется для получения справки по объекту.
 * `_protection` - Установка защиты на класс, если значение True, то добавление новых атрибутов объекта будет запрещено, по умолчанию защита установлена
+
+### Функции определения типов данных для объекта
+
+* `now(format)` - возвращает текущую дату и время в заданном формате [`format`](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior), по умолчанию формат **'%d/%m/%Y %H:%M:%S'**
 
 ## Использование
 

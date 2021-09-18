@@ -100,4 +100,4 @@ def test_func_now():
         https://github.com/DerNitro/pyRegistryStore/issues/11
     """
     test_obj1 = _plugins['person']()
-    assert isinstance(test_obj1.create_date, datetime)
+    assert isinstance(datetime.strptime(test_obj1.create_date, '%d/%m/%Y %H:%M:%S'), datetime)

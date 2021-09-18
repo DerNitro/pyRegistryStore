@@ -15,7 +15,7 @@
 """
 
 import os
-from datetime import date, datetime
+from datetime import datetime
 import uuid
 import json
 from typing import Union
@@ -163,8 +163,6 @@ class RegistryStore(yaml.YAMLObject):
         for key, value in self.__dict__.items():
             if isinstance(value, Meta):
                 result[key] = value.to_dict()
-            elif isinstance(value, datetime):
-                result[key] = str(value)
             else:
                 result[key] = value
         return result
@@ -377,11 +375,14 @@ def markdown(data: RegistryStore, folder: str, args: list):
     print_markdown(get_list_objects(data, folder, args))
 
 
-def now() -> datetime:
+def now(frm: str = '%d/%m/%Y %H:%M:%S') -> str:
     """
     Функция возвращает текущее время и дату
 
+    Args:
+        frm (str): Формат времени и даты
+
     Returns:
-        datetime: Текущее время и дата
+        str: Текущее время и дата
     """
-    return datetime.now()
+    return datetime.now().strftime(frm)
