@@ -1,10 +1,10 @@
 """
     Example plugin Person
 """
-import objects
+from datetime import datetime
+from objects import RegistryStore, now
 
-
-class Person(objects.RegistryStore):
+class Person(RegistryStore):
     """
     Person Object
 
@@ -15,9 +15,10 @@ class Person(objects.RegistryStore):
     last_name: str
         Last Name
     """
-    uniq_key = ['first_name', 'last_name']
-    desc = 'Module Person'
+    _uniq_key = ['first_name', 'last_name']
+    _desc = 'Module Person'
 
-    first_name: str = 'Foo'
-    last_name:  str = 'Bar'
-    sex:        str = ''
+    first_name:     str = 'Foo'
+    last_name:      str = 'Bar'
+    sex:            str = ''
+    create_date:    datetime = now()
