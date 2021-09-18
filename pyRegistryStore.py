@@ -25,7 +25,7 @@ import inspect
 from objects import set_object, get_object, last_object, help_object, markdown
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'

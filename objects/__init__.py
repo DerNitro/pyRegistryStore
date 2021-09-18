@@ -78,12 +78,15 @@ class RegistryStore(yaml.YAMLObject):
     _meta = None
     _protection = True
 
-    file_name = None
-    uniq_key = []
-    desc = None
+    _file_name = None
+    _uniq_key = []
+    _desc = None
 
     def __init__(self):
         self._meta = Meta()
+        for key in self.__class__.__dict__:
+            if not key.startswith('_'):
+                setattr(self, key, getattr(self, key))
 
     def meta_increment(self):
         """
@@ -107,7 +110,16 @@ class RegistryStore(yaml.YAMLObject):
         Returns:
             str: Значение RegistryStore.desc
         """
-        return self.desc
+        return self._desc
+
+    def uniq_key(self) -> list:
+        """
+        Возвращает список уникальных атрибутов
+
+        Returns:
+            list: Атрибуты
+        """
+        return self._uniq_key
 
     def help(self) -> str:
         """
@@ -136,8 +148,8 @@ class RegistryStore(yaml.YAMLObject):
         Returns:
             str: Имя файла
         """
-        if self.file_name:
-            return self.file_name
+        if self._file_name:
+            return self._file_name
         return str(self.__class__.__name__).lower() + '.yml'
 
     def to_dict(self):
@@ -163,7 +175,7 @@ class RegistryStore(yaml.YAMLObject):
 
     def __eq__(self, other) -> bool:
         if isinstance(other, self.__class__):
-            for uniq_key in self.uniq_key:
+            for uniq_key in self._uniq_key:
                 if getattr(self, uniq_key) != getattr(other, uniq_key):
                     return False
             return True
@@ -264,18 +276,18 @@ def print_markdown(data: list):
     header = set()
     body = []
     for obj in data:
-        header |= set([*obj.__dict__]).difference(set(obj.uniq_key))
+        header |= set([*obj.__dict__]).difference(set(obj.uniq_key()))
     header = list(header.difference(set(['_meta'])))
     header.insert(0, 'name')
     for obj in data:
         for h in header:
             if h == 'name':
                 name = []
-                for uk in obj.uniq_key:
+                for uk in obj.uniq_key():
                     name.append(getattr(obj, uk))
                 body.append(' '.join(name))
             else:
-                body.append(getattr(obj, h, ""))
+                body.append(str(getattr(obj, h, "")))
     result = header + body
     table = md_table().create_table(columns=len(header), rows=len(data) + 1, text=result)
 
@@ -361,3 +373,16 @@ def markdown(data: RegistryStore, folder: str, args: list):
         data (RegistryStore): Класс объекта
     """
     print_markdown(get_list_objects(data, folder, args))
+
+
+def now(frm: str = '%d/%m/%Y %H:%M:%S') -> str:
+    """
+    Функция возвращает текущее время и дату
+
+    Args:
+        frm (str): Формат времени и даты
+
+    Returns:
+        str: Текущее время и дата
+    """
+    return datetime.now().strftime(frm)

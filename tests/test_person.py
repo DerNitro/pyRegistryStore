@@ -6,6 +6,7 @@ import time
 import importlib
 import inspect
 import os
+from datetime import datetime
 
 OBJECT_FOLDER = '../objects'
 
@@ -64,7 +65,6 @@ def test_person():
     time.sleep(0.1)
     test_obj2 = _plugins['person']()
 
-    assert test_obj1.desc == test_obj2.desc == 'Module Person'
     assert test_obj1.first_name == test_obj2.first_name == 'Foo'
     assert test_obj1.last_name == test_obj2.last_name == 'Bar'
     assert test_obj1 == test_obj2
@@ -73,6 +73,7 @@ def test_person():
 def test_protection():
     """
         Проверка установки защиты на объект
+        https://github.com/DerNitro/pyRegistryStore/issues/9
     """
     test_obj1 = _plugins['person']()
     test_obj2 = _plugins['person']()
@@ -92,3 +93,11 @@ def test_protection():
     assert test_obj2.first_name == 'Bar'
     assert test_obj2.last_name == 'Foo'
     assert not hasattr(test_obj2, 'test')
+
+def test_func_now():
+    """
+        Тестирование функции формирования текущей даты
+        https://github.com/DerNitro/pyRegistryStore/issues/11
+    """
+    test_obj1 = _plugins['person']()
+    assert isinstance(datetime.strptime(test_obj1.create_date, '%d/%m/%Y %H:%M:%S'), datetime)
