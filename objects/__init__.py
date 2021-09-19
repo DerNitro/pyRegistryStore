@@ -77,6 +77,7 @@ class RegistryStore(yaml.YAMLObject):
     """
     _meta = None
     _protection = True
+    _updated = False
 
     _file_name = None
     _uniq_key = []
@@ -139,7 +140,18 @@ class RegistryStore(yaml.YAMLObject):
             value (str): Значение атрибута
         """
         if not self._protection or hasattr(self, key):
+            if getattr(self, key, None) != value:
+                self._updated = True
             setattr(self, key, value)
+
+    def updated(self) -> bool:
+        """
+        Проверка статуса обновления объекта
+
+        Returns:
+            bool: Результат
+        """
+        return self._updated
 
     def get_filename(self) -> str:
         """
@@ -316,10 +328,11 @@ def set_object(data: RegistryStore, folder: str, args: list):
         if rs_object in obj_list:
             indx = obj_list.index(rs_object)
             rs_object = obj_list.pop(indx)
-            rs_object.meta_increment()
             for arg in args:
                 key, value = str(arg).split('=')
                 rs_object.add_attr(key, auto_type(value))
+            if rs_object.updated():
+                rs_object.meta_increment()
             obj_list.append(rs_object)
         else:
             obj_list.append(rs_object)
@@ -328,6 +341,8 @@ def set_object(data: RegistryStore, folder: str, args: list):
 
     with open(file_name, 'w', encoding='UTF-8') as stream:
         stream.write(yaml.dump(obj_list, Dumper=yaml.CDumper))
+
+    print_json(rs_object)
 
 
 def get_object(data: RegistryStore, folder: str, args: list):
