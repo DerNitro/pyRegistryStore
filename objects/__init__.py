@@ -30,12 +30,14 @@ class Meta(yaml.YAMLObject):
 
     def __init__(self):
         self.create_time = datetime.now()
+        self.update_time = datetime.now()
         self.uuid = uuid.uuid4()
 
     def __repr__(self):
         return str(
             {
                 "create_time": str(self.create_time),
+                "update_time": str(self.update_time),
                 "uuid": str(self.uuid)
             }
         )
@@ -53,9 +55,16 @@ class Meta(yaml.YAMLObject):
         return dict(
             {
                 "create_time": str(self.create_time),
+                "update_time": str(self.update_time),
                 "uuid": str(self.uuid)
             }
         )
+
+    def update(self):
+        """
+        Обновление данных объекта
+        """
+        self.update_time = datetime.now()
 
 
 class RegistryStore(yaml.YAMLObject):
@@ -83,6 +92,12 @@ class RegistryStore(yaml.YAMLObject):
             state (bool): Статус True - Включить.
         """
         self._protection = state
+
+    def meta_update(self):
+        """
+            Вызов метода update объекта Meta
+        """
+        self._meta.update()
 
     def describe(self) -> str:
         """
@@ -121,6 +136,7 @@ class RegistryStore(yaml.YAMLObject):
         """
         if not self._protection or hasattr(self, key):
             setattr(self, key, value)
+            self.meta_update()
 
     def get_filename(self) -> str:
         """
