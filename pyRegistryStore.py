@@ -59,7 +59,7 @@ def load_plugins() -> list:
         if file.endswith('.py') and not file.startswith('__'):
             pluginfiles.append(file)
     plugins = map(form_module, pluginfiles)
-    importlib.import_module('objects')
+    importlib.import_module(OBJECT_FOLDER)
     modules = []
     for plugin in plugins:
         if not plugin.startswith('__'):
@@ -72,8 +72,9 @@ _modules = load_plugins()
 _plugins = {}
 
 for module in _modules:
+    module_name = str(module.__name__).replace('{}.'.format(OBJECT_FOLDER), '').lower()
     for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
+        if inspect.isclass(obj) and name.lower() == module_name:
             _plugins[str(obj.__name__).lower()] = obj
 
 HELP = """Help: - {file}:{version}
