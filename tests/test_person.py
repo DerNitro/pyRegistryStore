@@ -101,13 +101,3 @@ def test_func_now():
     """
     test_obj1 = _plugins['person']()
     assert isinstance(datetime.strptime(test_obj1.create_date, '%d/%m/%Y %H:%M:%S'), datetime)
-
-def test_is_changed():
-    """
-        Проверка обновления объекта
-    """
-    test_object = _plugins['person']()
-    assert not test_object.updated()
-    test_object.protection(False)
-    test_object.add_attr('test', 'test')
-    assert test_object.updated()
