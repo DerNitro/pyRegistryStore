@@ -25,7 +25,7 @@ import inspect
 from objects import set_object, get_object, last_object, help_object, markdown
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 __email__ = "utkins01@gmail.com"
 
 OBJECT_FOLDER = 'objects'
@@ -59,7 +59,7 @@ def load_plugins() -> list:
         if file.endswith('.py') and not file.startswith('__'):
             pluginfiles.append(file)
     plugins = map(form_module, pluginfiles)
-    importlib.import_module('objects')
+    importlib.import_module(OBJECT_FOLDER)
     modules = []
     for plugin in plugins:
         if not plugin.startswith('__'):
@@ -72,8 +72,9 @@ _modules = load_plugins()
 _plugins = {}
 
 for module in _modules:
+    module_name = str(module.__name__).replace('{}.'.format(OBJECT_FOLDER), '').lower()
     for name, obj in inspect.getmembers(module):
-        if inspect.isclass(obj):
+        if inspect.isclass(obj) and name.lower() == module_name:
             _plugins[str(obj.__name__).lower()] = obj
 
 HELP = """Help: - {file}:{version}

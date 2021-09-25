@@ -31,7 +31,6 @@ class Meta(yaml.YAMLObject):
     def __init__(self):
         self.create_time = datetime.now()
         self.update_time = datetime.now()
-        self.version = 1
         self.uuid = uuid.uuid4()
 
     def __repr__(self):
@@ -39,20 +38,12 @@ class Meta(yaml.YAMLObject):
             {
                 "create_time": str(self.create_time),
                 "update_time": str(self.update_time),
-                "version": self.version,
                 "uuid": str(self.uuid)
             }
         )
 
     def __str__(self) -> str:
         return str(self.__dict__)
-
-    def increment(self):
-        """
-        Инкрементное обновление версии
-        """
-        self.version += 1
-        self.update_time = datetime.now()
 
     def to_dict(self) -> dict:
         """
@@ -65,10 +56,15 @@ class Meta(yaml.YAMLObject):
             {
                 "create_time": str(self.create_time),
                 "update_time": str(self.update_time),
-                "version": self.version,
                 "uuid": str(self.uuid)
             }
         )
+
+    def update(self):
+        """
+        Обновление данных объекта
+        """
+        self.update_time = datetime.now()
 
 
 class RegistryStore(yaml.YAMLObject):
@@ -77,7 +73,6 @@ class RegistryStore(yaml.YAMLObject):
     """
     _meta = None
     _protection = True
-    _updated = False
 
     _file_name = None
     _uniq_key = []
@@ -89,12 +84,6 @@ class RegistryStore(yaml.YAMLObject):
             if not key.startswith('_'):
                 setattr(self, key, getattr(self, key))
 
-    def meta_increment(self):
-        """
-            Вызов метода increment объекта Meta
-        """
-        self._meta.increment()
-
     def protection(self, state: bool):
         """
         Устанавливает защиту на добавление атрибутов объекту
@@ -103,6 +92,12 @@ class RegistryStore(yaml.YAMLObject):
             state (bool): Статус True - Включить.
         """
         self._protection = state
+
+    def meta_update(self):
+        """
+            Вызов метода update объекта Meta
+        """
+        self._meta.update()
 
     def describe(self) -> str:
         """
@@ -140,18 +135,8 @@ class RegistryStore(yaml.YAMLObject):
             value (str): Значение атрибута
         """
         if not self._protection or hasattr(self, key):
-            if getattr(self, key, None) != value:
-                self._updated = True
             setattr(self, key, value)
-
-    def updated(self) -> bool:
-        """
-        Проверка статуса обновления объекта
-
-        Returns:
-            bool: Результат
-        """
-        return self._updated
+            self.meta_update()
 
     def get_filename(self) -> str:
         """
@@ -331,8 +316,6 @@ def set_object(data: RegistryStore, folder: str, args: list):
             for arg in args:
                 key, value = str(arg).split('=')
                 rs_object.add_attr(key, auto_type(value))
-            if rs_object.updated():
-                rs_object.meta_increment()
             obj_list.append(rs_object)
         else:
             obj_list.append(rs_object)
