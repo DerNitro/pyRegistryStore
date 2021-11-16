@@ -403,6 +403,7 @@ def del_object_list(data: RegistryStore, obj_list: List[RegistryStore]) -> List[
 
     return result
 
+
 def delete_object(data: RegistryStore, folder: str, args: list):
     """
     Удаление объекта из реестра
