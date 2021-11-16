@@ -130,13 +130,17 @@ def test_delete_object():
         Тестирование удаление объекта из реестра
         https://github.com/DerNitro/pyRegistryStore/issues/15
     """
+    REGISTRY_FOLDER = 'registry'
+    if not os.path.isdir(REGISTRY_FOLDER):
+        os.makedirs(REGISTRY_FOLDER)
+
     len_object = 10
     for i in range(0, len_object):
-        set_object(_plugins['person'], 'registry', ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
+        set_object(_plugins['person'], REGISTRY_FOLDER, ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
 
-    list1 = get_list_objects(_plugins['person'], 'registry', [])
+    list1 = get_list_objects(_plugins['person'], REGISTRY_FOLDER, [])
     assert len(list1) == len_object
     for i in range(0, len_object):
-        delete_object(_plugins['person'], 'registry', ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
+        delete_object(_plugins['person'], REGISTRY_FOLDER, ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
         len_object -= 1
-        assert len(get_list_objects(_plugins['person'], 'registry', [])) == len_object
+        assert len(get_list_objects(_plugins['person'], REGISTRY_FOLDER, [])) == len_object
