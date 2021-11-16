@@ -49,7 +49,7 @@
 Используется ключ **--help**
 
     ./pyRegistryStore.py --help
-    Help: - ./pyRegistryStore.py:0.0.1
+    Help: - ./pyRegistryStore.py
     Usage:
     1. get modules list
         ./pyRegistryStore.py ls

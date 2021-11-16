@@ -18,7 +18,7 @@ import os
 from datetime import datetime
 import uuid
 import json
-from typing import Union
+from typing import List, Union
 import yaml
 from mdutils.tools.Table import Table as md_table
 
@@ -384,3 +384,46 @@ def now(frm: str = '%d/%m/%Y %H:%M:%S') -> str:
         str: Текущее время и дата
     """
     return datetime.now().strftime(frm)
+
+
+def del_object_list(data: RegistryStore, obj_list: List[RegistryStore]) -> List[RegistryStore]:
+    """
+    Функция удаляет объект из списка и возвращает получившийся список
+
+    Args:
+        data (RegistryStore): Объект
+        obj_list (list): Список объектов
+
+    Returns:
+        list: Результат
+    """
+    result = obj_list[:]
+    indx = result.index(data)
+    result.pop(indx)
+
+    return result
+
+def delete_object(data: RegistryStore, folder: str, args: list):
+    """
+    Удаление объекта из реестра
+
+    Args:
+        data (RegistryStore): Класс объекта
+        folder (str): Директория расположения объекта
+        args (list): Список аргументов
+    """
+    obj_list = []
+    rs_object = data()
+    for arg in args:
+        key, value = str(arg).split('=')
+        rs_object.add_attr(key, auto_type(value))
+    file_name = os.path.join(folder, rs_object.get_filename())
+    if os.path.isfile(file_name):
+        with open(file_name, 'r', encoding='UTF-8') as stream:
+            obj_list = yaml.load(stream, Loader=yaml.CLoader)
+        if rs_object in obj_list:
+            indx = obj_list.index(rs_object)
+            rs_object = obj_list.pop(indx)
+
+    with open(file_name, 'w', encoding='UTF-8') as stream:
+        stream.write(yaml.dump(obj_list, Dumper=yaml.CDumper))
