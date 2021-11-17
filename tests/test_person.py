@@ -7,6 +7,9 @@ import importlib
 import inspect
 import os
 from datetime import datetime
+from random import choice
+
+from objects import del_object_list, delete_object, set_object, get_list_objects
 
 OBJECT_FOLDER = '../objects'
 
@@ -101,3 +104,43 @@ def test_func_now():
     """
     test_obj1 = _plugins['person']()
     assert isinstance(datetime.strptime(test_obj1.create_date, '%d/%m/%Y %H:%M:%S'), datetime)
+
+def test_del_object_list():
+    """
+        Тестирование удаление объекта из списка
+        https://github.com/DerNitro/pyRegistryStore/issues/15
+    """
+    list1 = []
+
+    for i in range(0, 10):
+        test_obj = _plugins['person']()
+        test_obj.add_attr('first_name', 'Bar-{}'.format(i))
+        test_obj.add_attr('last_name', 'Foo-{}'.format(i))
+        list1.append(test_obj)
+
+    del_object = choice(list1)
+    list2 = del_object_list(del_object, list1)
+
+    assert len(list1) == 10
+    assert len(list2) == 9
+    assert del_object not in list2
+
+def test_delete_object():
+    """
+        Тестирование удаление объекта из реестра
+        https://github.com/DerNitro/pyRegistryStore/issues/15
+    """
+    REGISTRY_FOLDER = 'registry'
+    if not os.path.isdir(REGISTRY_FOLDER):
+        os.makedirs(REGISTRY_FOLDER)
+
+    len_object = 10
+    for i in range(0, len_object):
+        set_object(_plugins['person'], REGISTRY_FOLDER, ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
+
+    list1 = get_list_objects(_plugins['person'], REGISTRY_FOLDER, [])
+    assert len(list1) == len_object
+    for i in range(0, len_object):
+        delete_object(_plugins['person'], REGISTRY_FOLDER, ['first_name=Foo-{}'.format(i), 'last_name=Bar-{}'.format(i)])
+        len_object -= 1
+        assert len(get_list_objects(_plugins['person'], REGISTRY_FOLDER, [])) == len_object

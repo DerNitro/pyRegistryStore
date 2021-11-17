@@ -4,7 +4,7 @@
 
 import sys
 sys.path.append('.')
-from objects import auto_type, equal_object, RegistryStore, print_json
+from objects import auto_type, equal_object, RegistryStore
 
 
 def test_auto_type():

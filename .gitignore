@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 registry/*
 .vscode/*
+objects/package.py
