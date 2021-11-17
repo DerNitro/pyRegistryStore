@@ -61,7 +61,9 @@
         ./pyRegistryStore.py <module> get [key=value]...
     5. last record from registry, key=value as filter, return json object
         ./pyRegistryStore.py <module> last [key=value]...
-    6. get markdown table
+    6. delete record from registry, key=value as filter
+        ./pyRegistryStore.py <module> delete [key=value]...
+    7. get markdown table
         ./pyRegistryStore.py <module> markdown [key=value]...
 
     Sergei V. Utkin, mailto:utkins01@gmail.com, 2021
@@ -114,6 +116,14 @@
 Последующие аргументы будут считаться фильтром через **"И"**. В качестве результата будет передан последний **объект в JSON**
 
     ./pyRegistryStore.py person last last_name=Bar
+
+### Удаление объекта
+
+Для удаления объекта требуется указать название модуля и передать параметр **delete**
+
+Последующие аргументы будут считаться фильтром через **"И"**.
+
+    ./pyRegistryStore.py person delete first_name=Foo last_name=Bar
 
 ### Формирование таблицы в формате Markdown
 
