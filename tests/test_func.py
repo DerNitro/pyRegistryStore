@@ -18,6 +18,7 @@ def test_auto_type():
     for i in ['false', 'f', 'no']:
         assert not auto_type(i)
 
+
 def test_equal_object():
     """
     Проверка функции идентификации объекта по атрибутам

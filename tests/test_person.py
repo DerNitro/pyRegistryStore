@@ -13,6 +13,7 @@ from objects import del_object_list, delete_object, set_object, get_list_objects
 
 OBJECT_FOLDER = '../objects'
 
+
 def form_module(file_path: str) -> str:
     """
     Формирует путь до плагина
@@ -57,6 +58,7 @@ for module in _modules:
         if inspect.isclass(obj):
             _plugins[str(obj.__name__).lower()] = obj
 
+
 def test_person():
     """
         Тестирование объекта Person
@@ -72,6 +74,7 @@ def test_person():
     assert test_obj1.last_name == test_obj2.last_name == 'Bar'
     assert test_obj1 == test_obj2
     assert test_obj2 > test_obj1
+
 
 def test_protection():
     """
@@ -97,6 +100,7 @@ def test_protection():
     assert test_obj2.last_name == 'Foo'
     assert not hasattr(test_obj2, 'test')
 
+
 def test_func_now():
     """
         Тестирование функции формирования текущей даты
@@ -104,6 +108,7 @@ def test_func_now():
     """
     test_obj1 = _plugins['person']()
     assert isinstance(datetime.strptime(test_obj1.create_date, '%d/%m/%Y %H:%M:%S'), datetime)
+
 
 def test_del_object_list():
     """
@@ -124,6 +129,7 @@ def test_del_object_list():
     assert len(list1) == 10
     assert len(list2) == 9
     assert del_object not in list2
+
 
 def test_delete_object():
     """
