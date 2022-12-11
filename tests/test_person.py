@@ -136,7 +136,7 @@ def test_delete_object():
         Тестирование удаление объекта из реестра
         https://github.com/DerNitro/pyRegistryStore/issues/15
     """
-    REGISTRY_FOLDER = 'registry'
+    REGISTRY_FOLDER = '/tmp/registry'
     if not os.path.isdir(REGISTRY_FOLDER):
         os.makedirs(REGISTRY_FOLDER)
 

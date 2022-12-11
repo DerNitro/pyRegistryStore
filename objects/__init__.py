@@ -20,7 +20,12 @@ import uuid
 import json
 from typing import List, Union
 import yaml
-from mdutils.tools.Table import Table as md_table
+
+try:
+    from mdutils.tools.Table import Table as md_table
+    MARKDOWN_MODULE = True
+except ModuleNotFoundError:
+    MARKDOWN_MODULE = False
 
 
 class Meta(yaml.YAMLObject):
@@ -370,7 +375,10 @@ def markdown(data: RegistryStore, folder: str, args: list):
     Args:
         data (RegistryStore): Класс объекта
     """
-    print_markdown(get_list_objects(data, folder, args))
+    if MARKDOWN_MODULE:
+        print_markdown(get_list_objects(data, folder, args))
+    else:
+        print("Don't find python module 'mdutils'")
 
 
 def now(frm: str = '%d/%m/%Y %H:%M:%S') -> str:

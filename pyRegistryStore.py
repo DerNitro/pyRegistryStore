@@ -22,7 +22,7 @@ import sys
 import importlib
 import os
 import inspect
-from objects import set_object, get_object, last_object, help_object, markdown, delete_object
+from objects import set_object, get_object, last_object, help_object, delete_object, markdown
 
 __author__ = "Sergey V. Utkin"
 __version__ = "0.0.9"
@@ -127,8 +127,10 @@ elif args[0] in [i for i in _plugins]:
         markdown(_plugins[args[0]], REGISTRY_FOLDER, args[2:])
     else:
         print(HELP)
-elif len(args) == 1 and (args[0] == '-h' or args[0] == '--help'):
+elif len(args) == 1 and (args[0] == '-h' or args[0] == '--help' or args[0] == 'help'):
     print(HELP)
+elif len(args) == 1 and (args[0] == '-v' or args[0] == '--version' or args[0] == 'version'):
+    print(__version__)
 else:
     print('Incorrect input of parameters !!!\n')
     print(HELP)
