@@ -8,7 +8,7 @@ DOCKER_BUILD	= PYTHON_VERSION=3.$(1) docker build -t pytest:3.$(1) --no-cache .c
 DOCKER_PYTEST 	= docker run --rm \
 				-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
 				-v /etc/passwd:/etc/passwd:ro \
-				-v $(PWD):/apps -t pytest:3.$(1) run -m pytest --junitxml=tests/output/units_3.$(1).xml
+				-v $(PWD):/apps -t pytest:3.$(1) run -m pytest -v --junitxml=tests/output/units_3.$(1).xml
 
 DOCKER_COVER 	= docker run --rm \
 				-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
