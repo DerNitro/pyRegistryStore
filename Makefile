@@ -20,6 +20,8 @@ test: version lint unit
 
 .PHONY: version
 version:
+	@echo "Run test version: $(APP_VERSION)"
+	@echo
 	@test -z `git tag -l $(APP_VERSION)` || (echo "Check version ($(APP_VERSION)) - failed"; false)
 
 .PHONY: lint
