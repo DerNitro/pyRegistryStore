@@ -22,13 +22,13 @@ import sys
 import importlib
 import os
 import inspect
-from objects import set_object, get_object, last_object, help_object, delete_object, markdown
+from pyRegistryStore import set_object, get_object, last_object, help_object, delete_object, markdown
 
 __author__ = "Sergey V. Utkin"
 __version__ = "0.0.9"
 __email__ = "utkins01@gmail.com"
 
-OBJECT_FOLDER = 'objects'
+OBJECT_FOLDER = 'pyRegistryStore'
 REGISTRY_FOLDER = 'registry'
 
 
@@ -63,7 +63,7 @@ def load_plugins() -> list:
     modules = []
     for plugin in plugins:
         if not plugin.startswith('__'):
-            modules.append(importlib.import_module(plugin, package="objects"))
+            modules.append(importlib.import_module(plugin, package=OBJECT_FOLDER))
 
     return modules
 

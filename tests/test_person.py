@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 from random import choice
 
-from objects import del_object_list, delete_object, set_object, get_list_objects
+from pyRegistryStore import del_object_list, delete_object, set_object, get_list_objects
 
 OBJECT_FOLDER = '../objects'
 

@@ -2,7 +2,7 @@
     Example plugin Person
 """
 from datetime import datetime
-from objects import RegistryStore, now
+from pyRegistryStore import RegistryStore, now
 
 
 class Person(RegistryStore):
