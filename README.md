@@ -1,7 +1,5 @@
 # pyRegistryStore
 
-[![CircleCI](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/prerealease.svg?style=shield)](https://circleci.com/gh/DerNitro/pyRegistryStore/tree/prerealease)
-
 `Внимание проект находится на стадии разработки!!!`
 
 Скрипт по созданию и работе с реестром объектов.
