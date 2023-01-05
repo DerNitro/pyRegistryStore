@@ -11,7 +11,7 @@ from random import choice
 
 from pyRegistryStore import del_object_list, delete_object, set_object, get_list_objects
 
-OBJECT_FOLDER = '../objects'
+OBJECT_FOLDER = '../pyRegistryStore'
 
 
 def form_module(file_path: str) -> str:
@@ -41,11 +41,11 @@ def load_plugins() -> list:
         if file.endswith('.py') and not file.startswith('__'):
             pluginfiles.append(file)
     plugins = map(form_module, pluginfiles)
-    importlib.import_module('objects')
+    importlib.import_module('pyRegistryStore')
     modules = []
     for plugin in plugins:
         if not plugin.startswith('__'):
-            modules.append(importlib.import_module(plugin, package="objects"))
+            modules.append(importlib.import_module(plugin, package="pyRegistryStore"))
 
     return modules
 

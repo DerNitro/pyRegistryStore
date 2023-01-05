@@ -25,8 +25,8 @@ import inspect
 from pyRegistryStore import set_object, get_object, last_object, help_object, delete_object, markdown
 
 __author__ = "Sergey V. Utkin"
-__version__ = "0.0.9"
 __email__ = "utkins01@gmail.com"
+__version__ = "0.0.9"
 
 OBJECT_FOLDER = 'pyRegistryStore'
 REGISTRY_FOLDER = 'registry'

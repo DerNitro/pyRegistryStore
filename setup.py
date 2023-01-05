@@ -10,4 +10,5 @@ setup(
     packages=find_packages(),
     scripts=['pyRegistryStore.py'],
     install_requires=['mdutils', 'pyyaml'],
+    license='Apache License 2.0',
 )

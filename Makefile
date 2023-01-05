@@ -1,24 +1,37 @@
-PYTHON3_VERSION	= $(shell seq 6 10)
-PWD				= $(shell pwd)
-USER            = $(shell whoami)
+PYTHON3_VERSION		= $(shell seq 6 10)
+PWD					= $(shell pwd)
+USER            	= $(shell whoami)
 
-APP_VERSION 	= $(shell ./pyRegistryStore.py version)
-SETUP_VERSION 	= $(shell python3 setup.py --version)
+GIT_SHORT_COMMIT 	= $(shell git log --pretty="%h" -n1)
+GIT_BRANCH			= $(shell git branch --show-current)
 
-DOCKER_BUILD	= PYTHON_VERSION=3.$(1) docker build -t pytest:3.$(1) --no-cache .ci/
-DOCKER_PYTEST 	= docker run --rm \
-				-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
-				-v /etc/passwd:/etc/passwd:ro \
-				-v $(PWD):/apps -t pytest:3.$(1) run -m pytest -v --junitxml=tests/output/units_3.$(1).xml
+APP_NAME			= pyRegistryStore
+APP_VERSION 		= $(shell ./pyRegistryStore.py version)
+SETUP_VERSION 		= $(shell python3 setup.py --version)
 
-DOCKER_COVER 	= docker run --rm \
-				-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
-				-v /etc/passwd:/etc/passwd:ro \
-				-v $(PWD):/apps -t pytest:3.10 $(1)
+DEV_ARTIFACT		= $(APP_NAME)-$(APP_VERSION).dev$(GIT_SHORT_COMMIT).tar.gz
+RELEASE_ARTIFACT	= $(APP_NAME)-$(APP_VERSION).tar.gz
+
+CI_ARTIFACT_PATH	= /opt/pip/pyRegistryStore
+
+DOCKER_BUILD		= PYTHON_VERSION=3.$(1) docker build -t pytest:3.$(1) --no-cache .ci/
+DOCKER_PYTEST 		= docker run --rm \
+					-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
+					-v /etc/passwd:/etc/passwd:ro \
+					-v $(PWD):/apps -t pytest:3.$(1) run -m pytest -v --junitxml=tests/output/units_3.$(1).xml
+
+DOCKER_COVER 		= docker run --rm \
+					-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
+					-v /etc/passwd:/etc/passwd:ro \
+					-v $(PWD):/apps -t pytest:3.10 $(1)
 
 .PHONY: test version lint unit build
 
-test: version lint unit build
+ifneq ($(GIT_BRANCH), 'release')
+all: version lint unit build
+else
+all: build
+endif
 
 version:
 	@echo "Run test version: $(APP_VERSION)"
@@ -40,7 +53,12 @@ unit:
 	@$(call DOCKER_COVER,html)
 
 clean:
-	rm -rf dist *.egg-info
+	@rm -rf dist *.egg-info
 
+ifneq ($(GIT_BRANCH), 'release')
 build: clean
-	python3 setup.py sdist
+	@python3 setup.py egg_info --tag-build=.dev$(GIT_SHORT_COMMIT) sdist
+	@scp dist/$(DEV_ARTIFACT) ci@su-blog.ru:$(CI_ARTIFACT_PATH)/dev
+	@mkdir /tmp/pip_download; cd /tmp/pip_download; pip download http://pip.su-blog.ru/pyRegistryStore/dev/$(DEV_ARTIFACT)
+	@rm -rf /tmp/pip_download
+endif
