@@ -1,0 +1,4 @@
+pytest
+pyyaml
+flake8
+mdutils

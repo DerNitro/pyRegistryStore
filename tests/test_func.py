@@ -4,7 +4,7 @@
 
 import sys
 sys.path.append('.')
-from objects import auto_type, equal_object, RegistryStore
+from pyRegistryStore import auto_type, equal_object, RegistryStore
 
 
 def test_auto_type():
@@ -17,6 +17,7 @@ def test_auto_type():
         assert auto_type(i)
     for i in ['false', 'f', 'no']:
         assert not auto_type(i)
+
 
 def test_equal_object():
     """
